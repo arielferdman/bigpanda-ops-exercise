@@ -5,6 +5,7 @@ import zipfile
 import tarfile
 import subprocess
 import logging
+import shutil
 
 app_zip_file_name = 'app.zip'
 images_file_name = 'images.tar.gz'
@@ -65,6 +66,8 @@ def rename_extracted_volume_dir_name():
     logger.info('renaming volume dir...')
     extracted_repo_path = os.path.join(data_dir_name, os.listdir(data_dir_name)[-1])
     new_repo_path = os.path.join(data_dir_name, repo_dir_name)
+    if repo_dir_name in os.listdir(data_dir_name):
+        shutil.rmtree(os.path.join(data_dir_name, repo_dir_name))
     os.rename(extracted_repo_path, new_repo_path)
 
     return new_repo_path
@@ -93,6 +96,8 @@ def healthcheck():
             if response.status == 200:
                 cond = 0
         except Exception as ex:
+            if ex.errno == 104:
+                pass
             logger.error(ex)
             cond = 1
         time.sleep(1)
@@ -108,7 +113,6 @@ def tear_down():
 
 def create_volume():
     logger.info('creating volumes...')
-    create_directory()
     download(urls['app_repo_url'], app_zip_file_name)
     download(urls['images_download_url'], images_file_name)
     extract('zip', app_zip_file_name, data_dir_name)
@@ -138,7 +142,8 @@ def main():
     deploy_config()
     logger.info('starting deploy process...')
     if not check_directory():
-        create_volume()
+        create_directory()
+    create_volume()
     docker_compose()
     # docker_compose('stop db')
 
