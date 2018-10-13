@@ -99,7 +99,6 @@ def healthcheck():
             if ex.errno == 104:
                 pass
             logger.error(ex)
-            cond = 1
         time.sleep(1)
         left_retries -= 1
 
