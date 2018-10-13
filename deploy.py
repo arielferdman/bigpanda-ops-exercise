@@ -19,11 +19,6 @@ urls = {
     'healthcheck': 'http://localhost:3000/health',
 }
 
-error_messeges = {
-    'create_directory': 'failed to create volume directory',
-
-}
-
 
 def errorlog(func):
     def wrapper(*args, **kwargs):
