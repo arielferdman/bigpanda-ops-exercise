@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  db:
+    build: ./volumes/app/db
+    ports:
+      - "27017:27017"
+
+  app:
+    depends_on:
+      - db
+    build: ./volumes/app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./volumes/app:/opt/app
+      - /opt/app/node_modules
